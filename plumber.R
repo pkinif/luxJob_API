@@ -2,13 +2,6 @@ library(plumber)
 library(luxJob)
 
 
-# TO DO
-# - improve the documentation
-# EG. Could be NULL or not
-# EG. Arguments are optional or not
-# - Test the API
-# - Add Bearer Authentication that query
-
 #* @apiTitle luxJob API
 #* @apiDescription API to explore skills, jobs, companies, learning tracks and book recommendations from the ADEM dataset.
 
@@ -17,6 +10,7 @@ library(luxJob)
 #* Get all skills
 #* @param limit Max number of skills to return
 #* @get /skills
+#* @
 function(limit = 100) {
     luxJob::get_skills(as.numeric(limit))
 }
