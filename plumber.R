@@ -1,118 +1,119 @@
+# plumber.R
+
+# Load packages
 library(plumber)
+library(DBI)
+library(RPostgres)
+library(glue)
 library(luxJob)
 
-
-#* @apiTitle luxJob API
-#* @apiDescription API to explore skills, jobs, companies, learning tracks and book recommendations from the ADEM dataset.
-
-# ---- SKILLS ----
+# ------------------------------------------------------------------------------
+# Skills
+# ------------------------------------------------------------------------------
 
 #* Get all skills
-#* @param limit Max number of skills to return
 #* @get /skills
-#* @
+#* @param limit:int Maximum number of skills to return
 function(limit = 100) {
-    luxJob::get_skills(as.numeric(limit))
+    luxJob::get_skills(as.integer(limit))
 }
 
-#* Get skill by ID
-#* @param skill_id The ESCO skill ID
+#* Get a skill by ID
 #* @get /skills/<skill_id>
+#* @param skill_id:string ID of the skill to retrieve
 function(skill_id) {
+    skill_id <- utils::URLdecode(skill_id)
     luxJob::get_skill_by_id(as.character(skill_id))
 }
 
-# ---- COMPANIES ----
+# ------------------------------------------------------------------------------
+# Companies
+# ------------------------------------------------------------------------------
 
 #* Get all companies
-#* @param limit Max number of companies to return
 #* @get /companies
+#* @param limit:int Maximum number of companies to return
 function(limit = 100) {
-    luxJob::get_companies(as.numeric(limit))
+    luxJob::get_companies(as.integer(limit))
 }
 
-#* Get company details by ID
-#* @param company_id The company ID
+#* Get a company by ID
 #* @get /companies/<company_id>
+#* @param company_id:int ID of the company to retrieve
 function(company_id) {
-    luxJob::get_company_details(as.numeric(company_id))
+    luxJob::get_company_details(as.integer(company_id))
 }
 
-# ---- JOB VACANCIES ----
+# ------------------------------------------------------------------------------
+# Vacancies
+# ------------------------------------------------------------------------------
 
 #* Get job vacancies
-#* @param skill Filter by skill_id
-#* @param company Filter by company_id
-#* @param canton Filter by canton name
-#* @param limit Max number of results
 #* @get /vacancies
+#* @param skill:string Skill ID to filter by
+#* @param company:int Company ID to filter by
+#* @param canton:string Canton name to filter by
+#* @param limit:int Maximum number of results to return
 function(skill = NULL, company = NULL, canton = NULL, limit = 100) {
     luxJob::get_vacancies(
         skill = skill,
-        company = if (!is.null(company)) as.numeric(company) else NULL,
+        company = if (!is.null(company)) as.integer(company) else NULL,
         canton = canton,
-        limit = as.numeric(limit)
+        limit = as.integer(limit)
     )
 }
 
-#* Get vacancy by ID
-#* @param vacancy_id The ID of the vacancy
+#* Get a vacancy by ID
 #* @get /vacancies/<vacancy_id>
+#* @param vacancy_id:int ID of the vacancy to retrieve
 function(vacancy_id) {
     luxJob::get_vacancy_by_id(as.numeric(vacancy_id))
 }
 
-# ---- LEARNING TRACKS ----
+# ------------------------------------------------------------------------------
+# Learning Tracks
+# ------------------------------------------------------------------------------
 
-#* Get all learning tracks
-#* @param skill_id Filter by skill_id
+#* Get learning tracks
 #* @get /learning_tracks
+#* @param skill_id:string Optional skill ID to filter learning tracks
 function(skill_id = NULL) {
-    luxJob::get_learning_tracks(skill_id = skill_id)
+    luxJob::get_learning_tracks(skill_id)
 }
 
-#* Get learning track by ID
-#* @param track_id The ID of the learning track
+#* Get a learning track by ID
 #* @get /learning_tracks/<track_id>
+#* @param track_id:int ID of the learning track to retrieve
 function(track_id) {
-    luxJob::get_learning_track_by_id(as.numeric(track_id))
+    luxJob::get_learning_track_by_id(as.integer(track_id))
 }
 
-# ---- BOOKS ----
+# ------------------------------------------------------------------------------
+# Books
+# ------------------------------------------------------------------------------
 
-#* Get all books
-#* @param skill Filter by skill_id
+#* Get book recommendations
 #* @get /books
+#* @param skill:string Optional skill ID to filter books
 function(skill = NULL) {
-    luxJob::get_books(skill = skill)
+    luxJob::get_books(skill)
 }
 
-#* Get book by ID
-#* @param book_id The book ID
+#* Get a book by ID
 #* @get /books/<book_id>
+#* @param book_id:int ID of the book to retrieve
 function(book_id) {
-    luxJob::get_book_by_id(as.numeric(book_id))
+    luxJob::get_book_by_id(as.integer(book_id))
 }
 
-# ---- SEARCH LOGGING ----
+# ------------------------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------------------------
 
-#* Log a user search
-#* @param user_id Integer user ID
-#* @param query Search query
+#* Log a search query
 #* @post /log_search
+#* @param user_id:int ID of the user making the search
+#* @param query:string Text of the search query
 function(user_id, query) {
-    success <- luxJob::log_search(
-        user_id = as.numeric(user_id),
-        query = query
-    )
-    list(status = if (success) "ok" else "error")
+    luxJob::log_search(as.integer(user_id), query)
 }
-
-# ---- CONFIGURATION ----
-
-#* @plumber
-function(pr) {
-    pr |> 
-        pr_set_serializer(serializer_unboxed_json()) 
-}
-
