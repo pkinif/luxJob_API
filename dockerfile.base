@@ -1,0 +1,28 @@
+# Dockerfile.base
+# docker build -f Dockerfile.base -t myapp/base .
+
+FROM rocker/tidyverse:latest
+
+# Copy the renv.lock file to use for package restoration
+COPY renv.lock /app/renv.lock
+
+# Update system libraries and install new ones needed for R packages
+RUN apt-get update && apt-get upgrade -y && apt-get clean && \
+    apt-get install -y --no-install-recommends \
+    libblas-dev \
+    liblapack-dev \
+    libxml2-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libssh2-1-dev \
+    libpq-dev
+
+# Set working directory
+WORKDIR /app
+
+# Install renv and restore R packages
+RUN Rscript -e 'install.packages("renv")' && \
+    Rscript -e 'renv::consent(provided = TRUE)' && \
+    Rscript -e 'renv::restore()'

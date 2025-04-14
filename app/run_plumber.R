@@ -26,7 +26,7 @@ add_bearer_auth <- function(api, paths = NULL) {
 }
 
 
-plumber::pr("plumber.R") |> 
+plumber::pr("app/plumber.R") |> 
   plumber::pr_set_api_spec(add_bearer_auth) |>
   plumber::pr_hook("preroute", function(req, res) {
     res$setHeader("Access-Control-Allow-Origin", "http://localhost:1234")

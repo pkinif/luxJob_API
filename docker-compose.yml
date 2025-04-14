@@ -1,0 +1,9 @@
+services:
+    rimage:
+        restart: unless-stopped
+        ports:
+            - '8080:8080'
+        env_file:
+            - .Renviron
+        image: plumber_image:latest
+        container_name: plumber_api
