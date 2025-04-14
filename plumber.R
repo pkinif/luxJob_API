@@ -21,7 +21,7 @@ function(limit = 100) {
 #* Get a skill by ID
 #* @get /skills/<skill_id>
 #* @param skill_id:string ID of the skill to retrieve
-function(skill_id) {
+function(skill_id = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73') {
     skill_id <- utils::URLdecode(skill_id)
     luxJob::get_skill_by_id(as.character(skill_id))
 }
@@ -95,7 +95,7 @@ function(track_id) {
 #* Get book recommendations
 #* @get /books
 #* @param skill:string Optional skill ID to filter books
-function(skill = NULL) {
+function(skill = 'http://data.europa.eu/esco/skill/70198e4e-86ad-4acc-a9eb-e24e2c107d18') {
     luxJob::get_books(skill)
 }
 
