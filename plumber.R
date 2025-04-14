@@ -18,20 +18,6 @@ function(limit = NULL) {
     luxJob::get_skills(as.integer(limit))
 }
 
-#* Get all skills
-#* @get /skills1
-#* @param limit:int Maximum number of skills to return
-function(limit = 100) {
-    luxJob::get_skills(as.integer(limit))
-}
-
-#* Get all skills
-#* @get /skills2
-#* @param limit:int optionnal Maximum number of skills to return
-function(limit) {
-    luxJob::get_skills(as.integer(limit))
-}
-
 #* Get a skill by ID
 #* @get /skills/<skill_id>
 #* @param skill_id:string ID of the skill to retrieve
