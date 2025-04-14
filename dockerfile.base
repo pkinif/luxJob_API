@@ -1,12 +1,11 @@
 # Dockerfile.base
-# docker build -f Dockerfile.base -t myapp/base .
-
+# docker build -f Dockerfile.base -t plumber_image_base .
 FROM rocker/tidyverse:latest
 
 # Copy the renv.lock file to use for package restoration
 COPY renv.lock /app/renv.lock
 
-# Update system libraries and install new ones needed for R packages
+# Update system libraries and install PostgreSQL client libs
 RUN apt-get update && apt-get upgrade -y && apt-get clean && \
     apt-get install -y --no-install-recommends \
     libblas-dev \
@@ -17,7 +16,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get clean && \
     libssl-dev \
     libcurl4-openssl-dev \
     libssh2-1-dev \
-    libpq-dev
+    libpq-dev \
+    libsodium-dev \
+    postgresql-client
+
 
 # Set working directory
 WORKDIR /app

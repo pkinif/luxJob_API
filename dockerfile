@@ -1,11 +1,14 @@
 # Dockerfile
-FROM myapp/base:latest
+FROM plumber_image_base:latest
 
-# Copy the app folder
+# Copy the application code and .Renviron
 COPY app /app/
+COPY .Renviron /app/.Renviron
 
-# Expose the port the app runs on
+WORKDIR /app
+
+# Expose the port the API runs on
 EXPOSE 8080
 
 # Set the entrypoint for the container
-ENTRYPOINT ["Rscript", "app.R"]
+ENTRYPOINT ["Rscript", "run_plumber.R"]

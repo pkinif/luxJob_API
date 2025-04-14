@@ -1,0 +1,3 @@
+docker build -f Dockerfile.base -t plumber_image_base .
+docker build -f Dockerfile -t plumber_image .
+docker compose up -d
