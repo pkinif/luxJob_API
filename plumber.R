@@ -14,14 +14,14 @@ library(luxJob)
 #* Get all skills
 #* @get /skills
 #* @param limit:int Maximum number of skills to return
-function(limit = NULL) {
+function(limit = 100) {
     luxJob::get_skills(as.integer(limit))
 }
 
 #* Get a skill by ID
 #* @get /skills/<skill_id>
 #* @param skill_id:string ID of the skill to retrieve
-function(skill_id = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73') {
+function(skil_id = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73') {
     skill_id <- utils::URLdecode(skill_id)
     luxJob::get_skill_by_id(as.character(skill_id))
 }
@@ -115,5 +115,5 @@ function(book_id) {
 #* @param user_id:int ID of the user making the search
 #* @param query:string Text of the search query
 function(user_id, query) {
-    luxJob::log_search(as.integer(user_id), query)
+    luxJob::log_search(as.integer(user_id), query, schema = 'adem')
 }
