@@ -5,19 +5,10 @@ FROM rocker/tidyverse:4.4.3
 COPY renv.lock /app/renv.lock
 
 # Update system libraries and install PostgreSQL client libs
-RUN apt-get update && apt-get upgrade -y && apt-get clean && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    libblas-dev \
-    liblapack-dev \
-    libxml2-dev \
-    libcairo2-dev \
-    libxt-dev \
-    libssl-dev \
-    libcurl4-openssl-dev \
-    libssh2-1-dev \
-    libpq-dev \
-    libsodium-dev \
-    postgresql-client
+        libsodium-dev \
+        libpq-dev 
 
 
 # Set working directory
