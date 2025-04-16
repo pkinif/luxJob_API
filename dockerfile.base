@@ -8,8 +8,9 @@ COPY renv.lock /app/renv.lock
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libsodium-dev \
-        libpq-dev 
-
+        libpq-dev \
+        zlib1g-dev \
+        libicu-dev
 
 # Set working directory
 WORKDIR /app
