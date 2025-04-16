@@ -18,6 +18,8 @@ auth_helper <- function(res, req, FUN, ...) {
         return(list(error = "Unauthorized: Invalid or missing token"))
     }
     
+    luxJob::adjust_quota(token = token, schema = Sys.getenv("sql_schema"))
+    
     FUN(...)
 }
 
