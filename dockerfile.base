@@ -1,6 +1,5 @@
 # Dockerfile.base
-# docker build -f Dockerfile.base -t plumber_image_base .
-FROM rocker/tidyverse:latest
+FROM rocker/tidyverse:4.4.3
 
 # Copy the renv.lock file to use for package restoration
 COPY renv.lock /app/renv.lock
