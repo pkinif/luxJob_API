@@ -4,7 +4,6 @@ add_bearer_auth <- function(api, paths = NULL) {
       BearerAuth = list(
         type = "http",
         scheme = "bearer",
-        bearerFormat = "JWT",
         description = "Enter a Bearer token like: Bearer abc123"
       )
     )
