@@ -88,3 +88,23 @@ test <- call_api_path(
 )
 
 test
+
+
+# Turning a list into a tibble - Shiny ------------------------------------
+
+companies <- result <- call_api(
+  endpoint = "http://localhost:8080/companies", 
+  token = "TokenExample1234567890"
+)
+
+
+library(tibble)
+library(purrr)
+
+companies_tbl <- companies |> 
+  map(~ tibble(
+    company_id = .x$company_id,
+    name = .x$name,
+    sector = .x$sector
+  )) |> 
+  list_rbind()
