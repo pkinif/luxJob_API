@@ -92,7 +92,7 @@ test
 
 # Turning a list into a tibble - Shiny ------------------------------------
 
-companies <- result <- call_api(
+companies <- call_api(
   endpoint = "http://localhost:8080/companies", 
   token = "TokenExample1234567890"
 )
@@ -108,3 +108,4 @@ companies_tbl <- companies |>
     sector = .x$sector
   )) |> 
   list_rbind()
+companies_tbl
