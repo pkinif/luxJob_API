@@ -64,7 +64,6 @@ call_api_path <- function(base_endpoint,
                           token = 'TokenExample1234567890', 
                           url_append, 
                           url_encode = T) {
-  # browser()
   req <- request(base_endpoint) |> 
     req_auth_bearer_token(token)
   
