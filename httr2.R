@@ -3,7 +3,6 @@ library(httr2)
 
 # Example -----------------------------------------------------------------
 
-
 resp <- request("http://localhost:8080/skills") |> 
   req_auth_bearer_token("TokenExample1234567890") |> 
   req_url_query(limit = 5) |>    # <- add your query parameter here
@@ -68,7 +67,7 @@ call_api_path <- function(base_endpoint,
   req <- request(base_endpoint) |> 
     req_auth_bearer_token(token)
   
-  if (url_encode){
+  if (url_encode) {
     req <- req |> 
       req_url_path_append(utils::URLencode(url_append, reserved = TRUE)) |> 
       req_perform() |> 
@@ -81,7 +80,6 @@ call_api_path <- function(base_endpoint,
   }
   return(req)
 }
-
 
 
 test <- call_api_path(
