@@ -88,3 +88,5 @@ test <- call_api_path(
   base_endpoint = 'http://localhost:8080/skills',
   url_append = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73'
 )
+
+test
