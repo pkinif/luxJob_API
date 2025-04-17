@@ -58,6 +58,7 @@ result_log_search <- call_api_post(
   query  = "data scientist",
   user_id = 10
 )
+result_log_search
 
 # URL path parameter -----------------------------------------------------------
 call_api_path <- function(base_endpoint, 
