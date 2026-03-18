@@ -271,6 +271,19 @@ The agent exposes 10 tools to Claude, each mapped to an API endpoint:
 | `get_books` | GET /books | Get book recommendations |
 | `get_book_by_id` | GET /books/:id | Get book details |
 
+### Usage dashboard
+
+The sidebar displays a real-time **API Usage** panel that tracks your Anthropic API consumption for the current session:
+
+| Metric | Description |
+|---|---|
+| **Input tokens** | Total tokens sent to Claude (questions + tool results) |
+| **Output tokens** | Total tokens received from Claude (answers + tool calls) |
+| **Session cost** | Estimated cost in USD based on the model's pricing |
+| **Turns** | Number of assistant responses so far |
+
+These counters reset when the page is refreshed (new session). Use them to monitor costs, especially on pay-per-token Anthropic plans.
+
 ### Example questions you can ask
 
 - "Show me job vacancies in Luxembourg city"
