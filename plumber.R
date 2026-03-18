@@ -2,10 +2,13 @@
 
 # Load packages
 library(plumber)
-library(DBI)
-library(RPostgres)
-library(glue)
 library(luxJob)
+
+#* Health check
+#* @get /health
+function() {
+    list(status = "ok")
+}
 
 # ------------------------------------------------------------------------------
 # Skills
@@ -15,15 +18,19 @@ library(luxJob)
 #* @get /skills
 #* @param limit:int Maximum number of skills to return
 function(limit = 100) {
-    luxJob::get_skills(as.integer(limit))
+    limit <- as.integer(limit)
+    if (is.na(limit) || limit < 1) {
+        limit <- 100L
+    }
+    luxJob::get_skills(limit)
 }
 
 #* Get a skill by ID
 #* @get /skills/<skill_id>
 #* @param skill_id:string ID of the skill to retrieve
-function(skil_id = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73') {
-    skill_id <- utils::URLdecode(skill_id)
-    luxJob::get_skill_by_id(as.character(skill_id))
+function(skill_id = "http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5cd2693ef73") {
+    skill_id <- utils::URLdecode(as.character(skill_id))
+    luxJob::get_skill_by_id(skill_id)
 }
 
 # ------------------------------------------------------------------------------
@@ -34,7 +41,11 @@ function(skil_id = 'http://data.europa.eu/esco/skill/97965983-0da4-4902-9daf-d5c
 #* @get /companies
 #* @param limit:int Maximum number of companies to return
 function(limit = 100) {
-    luxJob::get_companies(as.integer(limit))
+    limit <- as.integer(limit)
+    if (is.na(limit) || limit < 1) {
+        limit <- 100L
+    }
+    luxJob::get_companies(limit)
 }
 
 #* Get a company by ID
@@ -55,11 +66,15 @@ function(company_id) {
 #* @param canton:string Canton name to filter by
 #* @param limit:int Maximum number of results to return
 function(skill = NULL, company = NULL, canton = NULL, limit = 100) {
+    limit <- as.integer(limit)
+    if (is.na(limit) || limit < 1) {
+        limit <- 100L
+    }
     luxJob::get_vacancies(
         skill = skill,
         company = if (!is.null(company)) as.integer(company) else NULL,
         canton = canton,
-        limit = as.integer(limit)
+        limit = limit
     )
 }
 
@@ -67,7 +82,11 @@ function(skill = NULL, company = NULL, canton = NULL, limit = 100) {
 #* @get /vacancies/<vacancy_id>
 #* @param vacancy_id:int ID of the vacancy to retrieve
 function(vacancy_id) {
-    luxJob::get_vacancy_by_id(as.numeric(vacancy_id))
+    vacancy_id <- as.numeric(vacancy_id)
+    if (is.na(vacancy_id)) {
+        stop("`vacancy_id` must be numeric.")
+    }
+    luxJob::get_vacancy_by_id(vacancy_id)
 }
 
 # ------------------------------------------------------------------------------
