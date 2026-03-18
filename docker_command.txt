@@ -1,0 +1,15 @@
+# Build base image (only needed once, or when renv.lock changes)
+docker build -f dockerfile.base -t luxjob_base .
+
+# Build service images
+docker build -f dockerfile.api -t luxjob_api .
+docker build -f dockerfile.agent -t luxjob_agent .
+
+# Start both services
+docker compose up -d
+
+# Stop both services
+docker compose down
+
+# Rebuild after code changes (no need to rebuild base)
+docker compose up -d --build

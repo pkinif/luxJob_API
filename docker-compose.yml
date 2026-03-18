@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile.api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    env_file:
+      - .Renviron
+
+  agent:
+    build:
+      context: .
+      dockerfile: dockerfile.agent
+    ports:
+      - "${AGENT_PORT:-3838}:3838"
+    env_file:
+      - .Renviron
+    environment:
+      - LUXJOB_API_URL=http://api:8080
+    depends_on:
+      - api

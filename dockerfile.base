@@ -1,0 +1,16 @@
+FROM rocker/tidyverse:4.4.3
+
+COPY renv.lock /app/renv.lock
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libsodium-dev \
+        libpq-dev \
+        zlib1g-dev \
+        libicu-dev
+
+WORKDIR /app
+
+RUN Rscript -e 'install.packages("renv")' && \
+    Rscript -e 'renv::consent(provided = TRUE)' && \
+    Rscript -e 'renv::restore()'

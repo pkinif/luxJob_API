@@ -1,0 +1,10 @@
+FROM luxjob_base:latest
+
+COPY plumber.R /app/plumber.R
+COPY run_plumber.R /app/run_plumber.R
+
+WORKDIR /app
+
+EXPOSE 8080
+
+ENTRYPOINT ["Rscript", "run_plumber.R"]

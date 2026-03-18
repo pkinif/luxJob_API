@@ -1,0 +1,9 @@
+FROM luxjob_base:latest
+
+COPY agent /app/agent
+
+WORKDIR /app
+
+EXPOSE 3838
+
+ENTRYPOINT ["Rscript", "-e", "shiny::runApp('agent', host='0.0.0.0', port=3838)"]
