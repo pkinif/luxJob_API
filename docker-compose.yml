@@ -1,4 +1,12 @@
 services:
+  base:
+    build:
+      context: .
+      dockerfile: dockerfile.base
+    image: luxjob_base:latest
+    profiles:
+      - build  # Only build, never start (api/agent depend on this image)
+
   api:
     build:
       context: .
@@ -12,11 +20,11 @@ services:
     build:
       context: .
       dockerfile: dockerfile.agent
+    depends_on:
+      - api
     ports:
       - "${AGENT_PORT:-3838}:3838"
     env_file:
       - .Renviron
     environment:
       - LUXJOB_API_URL=http://api:8080
-    depends_on:
-      - api

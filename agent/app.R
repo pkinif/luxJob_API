@@ -172,6 +172,14 @@ ALL_TOOLS <- list(
   tool_get_book_by_id
 )
 
+# Simple examples: one API call each, low token usage
+EXAMPLE_PROMPTS <- c(
+  "List 5 companies",
+  "List 5 skills",
+  "Show 3 learning tracks",
+  "List 3 books"
+)
+
 # ---------------------------------------------------------------------------
 # UI
 # ---------------------------------------------------------------------------
@@ -227,8 +235,20 @@ ui <- page_fillable(
       border-radius: 999px;
       border: 1px solid var(--bs-border-color);
       margin: 0.2rem 0.15rem;
-      cursor: default;
+      cursor: grab;
       opacity: 0.85;
+      transition: opacity 0.15s, border-color 0.15s;
+    }
+    .example-chip:hover {
+      opacity: 1;
+      border-color: var(--bs-primary);
+    }
+    .example-chip:active {
+      cursor: grabbing;
+    }
+    .chat-drop-zone.drag-over {
+      outline: 2px dashed var(--bs-primary);
+      outline-offset: 2px;
     }
     .chat-message ul, .chat-message ol {
       padding-left: 1.4rem;
@@ -351,14 +371,24 @@ ui <- page_fillable(
             tags$h6(
               class = "text-uppercase fw-bold mb-2",
               style = "letter-spacing:0.05em; font-size:0.75rem; opacity:0.6;",
-              "Try asking"
+              "Try asking (click or drag to chat)"
             ),
             tags$div(
-              tags$span(class = "example-chip", "IT jobs in Luxembourg"),
-              tags$span(class = "example-chip", "Companies hiring now"),
-              tags$span(class = "example-chip", "Learn data analysis"),
-              tags$span(class = "example-chip", "Books about Python"),
-              tags$span(class = "example-chip", "Jobs in Esch-sur-Alzette")
+              id = "example-chips",
+              tagList(lapply(EXAMPLE_PROMPTS, function(prompt) {
+                tags$span(
+                  class = "example-chip",
+                  draggable = "true",
+                  `data-prompt` = prompt,
+                  prompt,
+                  onclick = HTML(sprintf(
+                    "Shiny.setInputValue('example_clicked', this.getAttribute('data-prompt'), {priority: 'event'});"
+                  )),
+                  ondragstart = HTML(sprintf(
+                    "event.dataTransfer.setData('text/plain', this.getAttribute('data-prompt')); event.dataTransfer.effectAllowed = 'copy';"
+                  ))
+                )
+              }))
             ),
             tags$div(
               class = "sidebar-footer",
@@ -366,9 +396,20 @@ ui <- page_fillable(
               tags$h6(
                 class = "text-uppercase fw-bold mb-2",
                 style = "letter-spacing:0.05em; font-size:0.75rem; opacity:0.6;",
-                "API Usage"
+                "Session usage"
               ),
               uiOutput("usage_stats"),
+              tags$p(
+                class = "mt-1 mb-0",
+                style = "font-size:0.7rem; opacity:0.6;",
+                "Credits: ",
+                tags$a(
+                  href = "https://console.anthropic.com/settings/limits",
+                  target = "_blank",
+                  "Anthropic Console",
+                  .noWS = "outside"
+                )
+              ),
               tags$hr(),
               tags$div(
                 class = "d-flex align-items-center gap-2",
@@ -381,7 +422,15 @@ ui <- page_fillable(
             )
           )
         ),
-        chat_ui("chat", placeholder = "Ask me about jobs, companies, skills...")
+        tags$div(
+          id = "chat-drop-zone",
+          class = "chat-drop-zone flex-grow-1 d-flex flex-column",
+          style = "min-height: 200px;",
+          ondragover = HTML("event.preventDefault(); event.currentTarget.classList.add('drag-over');"),
+          ondragleave = HTML("event.currentTarget.classList.remove('drag-over');"),
+          ondrop = HTML("event.preventDefault(); event.currentTarget.classList.remove('drag-over'); var t = event.dataTransfer.getData('text/plain'); if(t) Shiny.setInputValue('example_dropped', t, {priority: 'event'});"),
+          chat_ui("chat", placeholder = "Ask me about jobs, companies, skills...")
+        )
       )
     )
   )
@@ -402,13 +451,10 @@ server <- function(input, output, session) {
 
   usage <- reactiveValues(input = 0, output = 0, cost = 0, turns = 0)
 
-  observeEvent(input$chat_user_input, {
-    stream <- chat_client$stream_async(
-      input$chat_user_input,
-      stream = "content"
-    )
+  send_message <- function(text) {
+    chat_append("chat", text, role = "user")
+    stream <- chat_client$stream_async(text, stream = "content")
     prom <- chat_append("chat", stream)
-
     promises::then(prom,
       onFulfilled = function(value) {
         tokens <- chat_client$get_tokens()
@@ -419,6 +465,21 @@ server <- function(input, output, session) {
       },
       onRejected = function(err) {}
     )
+  }
+
+  observeEvent(input$chat_user_input, {
+    req(nchar(trimws(input$chat_user_input)) > 0)
+    send_message(input$chat_user_input)
+  })
+
+  observeEvent(input$example_clicked, {
+    req(input$example_clicked)
+    send_message(input$example_clicked)
+  })
+
+  observeEvent(input$example_dropped, {
+    req(input$example_dropped)
+    send_message(input$example_dropped)
   })
 
   output$usage_stats <- renderUI({
